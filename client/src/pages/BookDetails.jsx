@@ -1,10 +1,13 @@
+import { useState, useEffect, useContext } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { useState, useEffect, useContext } from 'react';
+//components
 import Form from '../components/Form';
+//contexts
+import LikeContext from '../contexts/LikeContext';
+//react icons
 import { AiFillLike } from 'react-icons/ai';
 import { AiFillDislike } from 'react-icons/ai';
-import LikeContext from '../contexts/LikeContext';
 
 const BookDetails = () => {
   const defaultFormData = {
@@ -13,14 +16,22 @@ const BookDetails = () => {
     rating: 0,
     author: '',
   };
+  const [formData, setFormData] = useState(defaultFormData);
+
+  //get id from the url
   const { id } = useParams();
-  const navigateTo = useNavigate();
+
   const [book, setBook] = useState(null);
+
   const [editToggler, setEditToggler] = useState(false);
   const [likeToggler, setLikeToggler] = useState(false);
-  const [formData, setFormData] = useState(defaultFormData);
+
+  //Getting likes(contains all liked books id) and updateLikedBooks function to add or delete book id
   const { likes, updateLikedBooks } = useContext(LikeContext);
 
+  const navigateTo = useNavigate();
+
+  //getting book detail from database using id
   const getBookDetails = async () => {
     const { data } = await axios.get(`http://localhost:5005/books/${id}`);
     setBook(() => data);
@@ -42,12 +53,13 @@ const BookDetails = () => {
   };
 
   const likeCheck = () => {
+    //we add "book" in the beginning just to make sure when the book state is null, we dont want to execute setLikeToggler function. Basically its a short form of saying -> if(book) {then do something here}
     book && setLikeToggler(() => likes.includes(book._id));
   };
 
   useEffect(() => {
     likeCheck();
-  }, [book]);
+  }, [book]); //<-- book as a dependency means this useEffect will run at the very first time and also whenever the book state get changes.
 
   useEffect(() => {
     try {
@@ -70,7 +82,9 @@ const BookDetails = () => {
   const deleteHandler = () => {
     try {
       deleteBook();
-    } catch (error) {}
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   const editHandler = (e) => {
@@ -79,6 +93,8 @@ const BookDetails = () => {
 
   const likeHandler = (e) => {
     setLikeToggler(() => !likeToggler);
+
+    //this function will execute from the LikeContext, we are passing like state and the book id as an argument.
     updateLikedBooks(!likeToggler, book._id);
   };
 

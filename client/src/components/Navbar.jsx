@@ -1,11 +1,13 @@
 import { NavLink } from 'react-router-dom';
 import { useContext } from 'react';
 import LikeContext from '../contexts/LikeContext';
+
 const styles = {
   display: 'flex',
   justifyContent: 'space-around',
 };
 
+//Key difference between Link and NavLink is to hace access of this "isActive" object.
 const activeStyle = ({ isActive }) => {
   return { color: isActive ? 'Red' : 'Green' };
 };
@@ -13,6 +15,7 @@ const activeStyle = ({ isActive }) => {
 const NavBar = () => {
   const { likes } = useContext(LikeContext);
   return (
+    // this empty <> calls React fragments
     <>
       <div style={styles}>
         <NavLink to="/" style={activeStyle}>

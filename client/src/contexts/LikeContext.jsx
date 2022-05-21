@@ -7,6 +7,7 @@ export const LikeProvider = ({ children }) => {
     JSON.parse(localStorage.getItem('likes')) || []
   );
 
+    //store the likes(liked books id) in the local storage
   useEffect(() => {
     localStorage.setItem('likes', JSON.stringify(likes));
   }, [likes]);
