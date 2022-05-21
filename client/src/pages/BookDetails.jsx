@@ -19,7 +19,7 @@ const BookDetails = () => {
   const [editToggler, setEditToggler] = useState(false);
   const [likeToggler, setLikeToggler] = useState(false);
   const [formData, setFormData] = useState(defaultFormData);
-  const { updateLikedBooks } = useContext(LikeContext);
+  const { likes, updateLikedBooks } = useContext(LikeContext);
 
   const getBookDetails = async () => {
     const { data } = await axios.get(`http://localhost:5005/books/${id}`);
@@ -40,6 +40,14 @@ const BookDetails = () => {
     const { data } = await axios.delete(`http://localhost:5005/books/${id}`);
     navigateTo('/books');
   };
+
+  const likeCheck = () => {
+    book && setLikeToggler(() => likes.includes(book._id));
+  };
+
+  useEffect(() => {
+    likeCheck();
+  }, [book]);
 
   useEffect(() => {
     try {
@@ -71,7 +79,7 @@ const BookDetails = () => {
 
   const likeHandler = (e) => {
     setLikeToggler(() => !likeToggler);
-    updateLikedBooks(!likeToggler, book._id );
+    updateLikedBooks(!likeToggler, book._id);
   };
 
   return (

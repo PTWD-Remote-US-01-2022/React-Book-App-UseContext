@@ -1,9 +1,15 @@
-import { createContext, useState } from 'react';
+import { createContext, useState, useEffect } from 'react';
 
 const LikeContext = createContext();
 
 export const LikeProvider = ({ children }) => {
-  const [likes, setLikes] = useState([]);
+  const [likes, setLikes] = useState(
+    JSON.parse(localStorage.getItem('likes')) || []
+  );
+
+  useEffect(() => {
+    localStorage.setItem('likes', JSON.stringify(likes));
+  }, [likes]);
 
   const uniqueLikes = (bookId) => {
     if (!likes.includes(bookId))
@@ -15,7 +21,6 @@ export const LikeProvider = ({ children }) => {
       ? uniqueLikes(bookId)
       : setLikes((prevLikes) => prevLikes.filter((id) => id !== bookId));
   };
-  console.log(likes);
   return (
     <LikeContext.Provider value={{ likes, updateLikedBooks }}>
       {children}
